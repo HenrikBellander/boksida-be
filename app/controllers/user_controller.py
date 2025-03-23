@@ -30,6 +30,7 @@ def delete_user(user_id):
 
     return dict(user) if user else None
 
+#TODO Remove user_id if auto-increment
 def add_user(username, password):
     """Lägg till användare i databasen."""
     conn = get_db_connection()
