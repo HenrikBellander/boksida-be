@@ -21,3 +21,28 @@ def get_single_user(user_id):
     conn.close()
 
     return dict(user) if user else None
+
+def delete_user(user_id):
+    """Ta bort användare med hjälp av ID."""
+    conn = get_db_connection()
+    user = conn.execute("DELETE FROM users WHERE user_id = ?", (user_id,)).fetchone()
+    conn.close()
+
+    return dict(user) if user else None
+
+def add_user(username, password):
+    """Lägg till användare i databasen."""
+    conn = get_db_connection()
+    user_id = conn.execute("SELECT MAX(user_id) FROM users") + 1
+    user = conn.execute("INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)", (user_id, username, password)).fetchone()
+    conn.close()
+
+    return dict(user) if user else None
+
+def update_user(user_id, username, password):
+    """Uppdatera användare med hjälp av ID."""
+    conn = get_db_connection()
+    user = conn.execute("UPDATE users SET username = ?, password = ? WHERE user_id = ?", (username, password, user_id,)).fetchone()
+    conn.close()
+
+    return dict(user) if user else None
