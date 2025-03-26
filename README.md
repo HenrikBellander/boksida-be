@@ -12,20 +12,23 @@ Vi har gjort en webbapplikation där man kan betygsätta böcker samt lägga til
 
 # Grafisk info
 
-  /- Lägg in när vi bestämt nåt -/
+Designprincip ”mobile first".
+Färgschema, font. (motivering)
  
 # Branch-struktur
 
-  - Main/master används för färdig produkt
-  - Dev används som huvudbranch i arbetet
-  - Features branchar ut från dev och mergas in när de är färdiga
+  - Main/master används för färdig produkt.
+  - Dev används som huvudbranch i arbetet.
+  - Features branchar ut från dev och mergas in när de är färdiga.
 
 # PR-regler
 
-Pull requests ska vara granskade av minst en gruppmedlem innan de slås samman med huvudbranchen
+Pull requests ska vara granskade av minst en gruppmedlem innan de slås samman med huvudbranchen. 
 
 # Databasstruktur
 
+Vi har tre hududtabbeller, en för att hantera böcker, en för medlemmar och en för bokbetyg.
+
 # Kända buggar
 
-Inga i nuläget
+Inga i nuläget.
