@@ -31,19 +31,19 @@ def delete_user(user_id):
     return dict(user) if user else None
 
 #TODO Remove user_id if auto-increment
-def add_user(username, password):
+def add_user(username, password, email):
     """Lägg till användare i databasen."""
     conn = get_db_connection()
     user_id = conn.execute("SELECT MAX(user_id) FROM users") + 1
-    user = conn.execute("INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)", (user_id, username, password)).fetchone()
+    user = conn.execute("INSERT INTO users (user_id, username, password, email) VALUES (?, ?, ?, ?)", (user_id, username, password, email)).fetchone()
     conn.close()
 
     return dict(user) if user else None
 
-def update_user(user_id, username, password):
+def update_user(user_id, username, password, email):
     """Uppdatera användare med hjälp av ID."""
     conn = get_db_connection()
-    user = conn.execute("UPDATE users SET username = ?, password = ? WHERE user_id = ?", (username, password, user_id,)).fetchone()
+    user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, password, email, user_id,)).fetchone()
     conn.close()
 
     return dict(user) if user else None
