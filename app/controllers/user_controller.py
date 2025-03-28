@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 def get_db_connection():
     """Ansluter till SQLite-databasen och returnerar anslutningen."""
@@ -26,24 +27,26 @@ def delete_user(user_id):
     """Ta bort användare med hjälp av ID."""
     conn = get_db_connection()
     user = conn.execute("DELETE FROM users WHERE user_id = ?", (user_id,)).fetchone()
+    conn.commit()
     conn.close()
 
     return dict(user) if user else None
 
-#TODO Remove user_id if auto-increment
 def add_user(username, password, email):
+    print(username)
     """Lägg till användare i databasen."""
     conn = get_db_connection()
-    user_id = conn.execute("SELECT MAX(user_id) FROM users") + 1
-    user = conn.execute("INSERT INTO users (user_id, username, password, email) VALUES (?, ?, ?, ?)", (user_id, username, password, email)).fetchone()
+    user = conn.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, generate_password_hash(password), email)).lastrowid
+    conn.commit()
     conn.close()
 
-    return dict(user) if user else None
+    return user if user else None
 
 def update_user(user_id, username, password, email):
     """Uppdatera användare med hjälp av ID."""
     conn = get_db_connection()
     user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, password, email, user_id,)).fetchone()
+    conn.commit()
     conn.close()
 
     return dict(user) if user else None

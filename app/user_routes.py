@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from .controllers.user_controller import get_users, get_single_user, delete_user, add_user, update_user
 
 users = Blueprint('users', __name__, url_prefix='/users')
@@ -34,10 +34,16 @@ def update_user_route(id, username, password, email):
     return jsonify(user)
 
 @users.route('/', methods=['POST'])
-def new_user(username, password, email):
-    
+def new_user():
+    #print('hej')
+    #print(request.get_json())
+    data = request.get_json()
     """Skapa en ny användare."""
-    user = add_user(username, password, email)
+    #print(data.get('username'))
+    user = add_user(data.get('username'), data.get('password'), data.get('email'))
+    #print(2)
     if user is None:
+        print(3)
         return jsonify({"error": "Något gick fel"}), 404
-    return jsonify(user)
+    print(f'user: {user}')
+    return jsonify(), 200
