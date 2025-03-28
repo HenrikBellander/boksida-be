@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from .controllers.user_controller import get_users, get_single_user, delete_user, add_user, update_user
 
 users = Blueprint('users', __name__, url_prefix='/users')
@@ -26,20 +26,18 @@ def del_user(id):
     return jsonify(user)
 
 @users.route('/user/<id>', methods=['PUT'])
-def update_user_route(id, username, password):
+def update_user_route(id, username, password, email):
     """Uppdatera en användare."""
-    user = update_user(id, username, password)
+    user = update_user(id, username, password, email)
     if user is None:
         return jsonify({"error": "Användaren hittades inte"}), 404
     return jsonify(user)
 
 @users.route('/', methods=['POST'])
-def new_user(username, password):
+def new_user(username, password, email):
+    
     """Skapa en ny användare."""
-    user = add_user(username, password)
+    user = add_user(username, password, email)
     if user is None:
         return jsonify({"error": "Något gick fel"}), 404
     return jsonify(user)
-
-
-
