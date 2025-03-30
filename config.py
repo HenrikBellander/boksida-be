@@ -1,2 +1,2 @@
 class Config:
-    DB_PATH = "boksida-be/books_data.db"
+    DB_PATH = "books_data.db"
