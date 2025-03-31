@@ -33,20 +33,25 @@ def delete_user(user_id):
     return dict(user) if user else None
 
 def add_user(username, password, email):
-    print(username)
-    """Lägg till användare i databasen."""
-    conn = get_db_connection()
-    user = conn.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, generate_password_hash(password), email)).lastrowid
-    conn.commit()
-    conn.close()
+    if (any(user['username'] == username for user in get_users())):
+        return 'Username already exists'
+    else:
+        """Lägg till användare i databasen."""
+        conn = get_db_connection()
+        user = conn.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, generate_password_hash(password), email)).lastrowid
+        conn.commit()
+        conn.close()
 
-    return user if user else None
+        return user if user else None
 
 def update_user(user_id, username, password, email):
-    """Uppdatera användare med hjälp av ID."""
-    conn = get_db_connection()
-    user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, generate_password_hash(password), email, user_id,)).fetchone()
-    conn.commit()
-    conn.close()
+    if (any(user['username'] == username for user in get_users())):
+        return 'Username already exists'
+    else:
+        """Uppdatera användare med hjälp av ID."""
+        conn = get_db_connection()
+        user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, generate_password_hash(password), email, user_id,)).fetchone()
+        conn.commit()
+        conn.close()
 
     return dict(user) if user else None
