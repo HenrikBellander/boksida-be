@@ -45,7 +45,7 @@ def add_user(username, password, email):
 def update_user(user_id, username, password, email):
     """Uppdatera användare med hjälp av ID."""
     conn = get_db_connection()
-    user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, password, email, user_id,)).fetchone()
+    user = conn.execute("UPDATE users SET username = ?, password = ?, email = ? WHERE user_id = ?", (username, generate_password_hash(password), email, user_id,)).fetchone()
     conn.commit()
     conn.close()
 
