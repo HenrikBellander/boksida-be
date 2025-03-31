@@ -35,15 +35,10 @@ def update_user_route(id, username, password, email):
 
 @users.route('/', methods=['POST'])
 def new_user():
-    #print('hej')
-    #print(request.get_json())
     data = request.get_json()
     """Skapa en ny användare."""
-    #print(data.get('username'))
     user = add_user(data.get('username'), data.get('password'), data.get('email'))
-    #print(2)
     if user is None:
-        print(3)
         return jsonify({"error": "Något gick fel"}), 404
     print(f'user: {user}')
-    return jsonify(), 200
+    return jsonify(user), 200
