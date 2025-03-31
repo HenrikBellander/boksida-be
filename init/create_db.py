@@ -60,7 +60,7 @@ class Database:
         conn.commit()
         return conn
 
-     # SQLite database, ta bort tabell
+    # SQLite database, ta bort tabell
     def delete_table(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
