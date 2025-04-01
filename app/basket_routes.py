@@ -1,34 +1,33 @@
-# basket_routes.py
 from flask import Blueprint, jsonify, request
-from .controllers.basket_controller import get_basket_items, add_item_to_basket, remove_item_from_basket
+from app.controllers.basket_controller import get_basket_items, add_item_to_basket, remove_item_from_basket
 
 basket = Blueprint('basket', __name__)
 
-@basket.route('/basket')
-def get_basket_items():
-    return {"message": "Basket endpoint"}
+@basket.route('/api/basket', methods=['POST'])
+def new_item():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    book_id = data.get('book_id')
+    quantity = data.get('quantity', 1)
+    new_basket_id = add_item_to_basket(user_id, book_id, quantity)
+    if new_basket_id:
+        return jsonify({"basket_id": new_basket_id}), 200
+    return jsonify({"error": "Something went wrong"}), 400
 
-@basket.route('/basket/<id>', methods=['GET'])
-def show_basket(id):
-    """Visar en specifik användare."""
-    basket = get_basket_items(id)
-    if basket is None:
-        return jsonify({"error": "Tom varukorg"}), 404
-    return jsonify(basket)
+@basket.route('/api/basket/<int:book_id>', methods=['DELETE'])
+def del_item(book_id):
+    # For now, assume a fictive user with user_id=2
+    user_id = 2
+    result = remove_item_from_basket(user_id, book_id)
+    if result:
+        return jsonify({"message": "Book removed from basket"}), 200
+    return jsonify({"error": "Book not found in basket"}), 404
 
-@basket.route('/basket/<id>', methods=['DELETE'])
-def del_item(id):
-    """Ta bort en bok ur korgen."""
-    basket = remove_item_from_basket(id)
-    if basket is None:
-        return jsonify({"error": "Boken hittades inte"}), 404
-    return jsonify(basket)
-
-@basket.route('/', methods=['POST'])
-def new_item(user_id, book_id, quantity):
-    """Addera bok i korgen."""
-    basket = add_item_to_basket(user_id, book_id, quantity)
-    if basket is None:
-        return jsonify({"error": "Något gick fel"}), 404
-    print(f'basket: {basket}')
-    return jsonify(basket), 200
+@basket.route('/api/basket/<int:user_id>', methods=['GET'])
+def show_basket(user_id):
+    basket_items = get_basket_items(user_id)
+    if not basket_items:
+        return jsonify({"error": "Empty basket"}), 404
+    # Calculate total sum (assumes book_price is stored in a numeric format or convertible)
+    total = sum(float(item['book_price']) for item in basket_items)
+    return jsonify({"basket_items": basket_items, "total": total})
