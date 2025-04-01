@@ -3,7 +3,7 @@ from ..controllers.user_controller import verify_user
 from ..controllers.auth_controller import authenticate_user, verify_jwt
 from datetime import datetime, timedelta
 
-auth = Blueprint("auth", __name__)
+auth = Blueprint("auth", __name__, url_prefix='/auth')
 
 @auth.route('/login', methods=['POST'])
 def login():

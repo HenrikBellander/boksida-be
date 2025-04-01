@@ -11,7 +11,7 @@ from ..controllers.user_controller import (
 users = Blueprint('users', __name__, url_prefix='/users')
 
 @users.route('/', methods=['GET'])
-def get_all_users():
+def get_all_userss():
     users = get_all_users()
     return jsonify(users)
 
@@ -57,7 +57,7 @@ def update_user_route(id, username, password, email):
 #     print(f'user: {user}')
 #     return jsonify(), 200
 
-@users.route('/register', methods=['POST'])
+@users.route('/', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
@@ -66,6 +66,7 @@ def register():
     
     user, error = create_user(username, password, email)
     if error:
-        return jsonify({"error": error}), 400
+        return jsonify({"error": error}), 200
     
-    return jsonify({"message": "User created", "user": user}), 201
+    #return jsonify({"message": "User created", "user": user}), 201
+    return jsonify(user), 201
