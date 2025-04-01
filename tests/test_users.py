@@ -48,8 +48,17 @@ def test_get_all_users(client):
     assert any(user['username'] == 'test-user' for user in users)
     assert any(user['username'] == 'magkur6' for user in users)
 
-# def test_update_user(client):
-#     pass
+def test_update_user(client):
+    response = client.put(
+        '/users/username/test-user',
+        data = json.dumps({'username': 'test-user2', 'password': '123', 'email': '123'}),
+        content_type='application/json',
+    )
+    print(response)
+    assert response.status_code == 200
 
-# def test_delete_user(client):
-#     pass
+def test_delete_user(client):
+    response = client.delete('/users/username/test-user2')
+    response = client.get('/users/')
+    users = response.json[0]
+    assert not any(user['username'] == 'test-user' for user in users)

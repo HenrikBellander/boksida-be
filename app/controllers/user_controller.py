@@ -156,6 +156,12 @@ def update_user(user_id, new_data):
                 (password_hash, user_id)
             )
 
+        if 'email' in new_data:
+            cursor.execute(
+                "UPDATE users SET email = ? WHERE user_id = ?",
+                (new_data['email'], user_id)
+            )
+
         conn.commit()
         return {"message": "User updated successfully"}, None
     except Exception as e:
@@ -163,6 +169,12 @@ def update_user(user_id, new_data):
         return None, f"Database error: {str(e)}"
     finally:
         conn.close()
+
+def update_user_username(name, data):
+    """Uppdatera en användare."""
+    id = get_user_by_id_or_username(None, name)[0]['id']
+    user = update_user(id, {'username': data['username'], 'password': data['password'], 'email': data['email']})
+    return user
 
 def get_users():
     """Hämtar alla användare från databasen och returnerar som JSON."""
