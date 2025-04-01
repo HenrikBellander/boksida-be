@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from ..controllers.user_controller import verify_user
-from ..controllers.auth_controller import authenticate_user, verify_jwt, generate_jwt
+from ..controllers.auth_controller import authenticate_user, get_db_connection, verify_jwt, generate_jwt
 from datetime import datetime, timedelta
 from functools import wraps
 
@@ -13,28 +13,53 @@ def login():
     password = data.get('password')
     
     if not username or not password:
-        return jsonify({"error": "Username and password required"}), 400
+        return jsonify({
+            "status": "error",
+            "message": "Username and password required",
+            "data": None
+        }), 400
     
     token, error = authenticate_user(username, password)
     if error:
-        return jsonify({"error": error}), 401
+        return jsonify({
+            "status": "error",
+            "message": error,
+            "data": None
+        }), 401
     
-    #response = jsonify({"message": "Login successful"})
+    # Get complete user data from database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT user_id, username, email FROM users WHERE username = ?", 
+        (username,)
+    )
+    user = cursor.fetchone()
+    conn.close()
+    
     response = jsonify({
         "status": "success",
         "message": "Login successful",
-        "data": None
+        "data": {
+            "user": {
+                "id": user[0],
+                "username": user[1],
+                "email": user[2] if len(user) > 2 else None
+            }
+        }
     })
-    # response.set_cookie('token', token, httponly=True, secure=True)
+    
     response.set_cookie(
         'token',
         token,
         httponly=True,
-        secure=True,
+        secure=False,  # True in production (HTTPS)
         samesite='Lax',
         max_age=86400,  # 24h
-        path='/'
+        path='/',
+        domain=None  # Current domain only
     )
+    
     return response
 
 # @auth.route('/verify', methods=['GET'])
