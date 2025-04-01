@@ -4,13 +4,14 @@ from ..controllers.user_controller import (
     create_user,
     get_user_by_id_or_username,
     delete_user,
-    update_user
+    update_user,
+    delete_user_name
 )
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
 @users.route('/', methods=['GET'])
-def get_all_users():
+def get_all_userss():
     users = get_all_users()
     return jsonify(users)
 
@@ -40,6 +41,13 @@ def del_user(id):
         return jsonify({"error": "Användaren hittades inte"}), 404
     return jsonify(user)
 
+@users.route('/user/username/<name>', methods=['DELETE'])
+def del_user_name(name):
+    user = delete_user_name(name)
+    if user is None:
+        return jsonify({"error": "Användaren hittades inte"}), 404
+    return jsonify(user)
+
 @users.route('/user/<id>', methods=['PUT'])
 def update_user_route(id, username, password, email):
     user = update_user(id, username, password, email)
@@ -56,7 +64,7 @@ def update_user_route(id, username, password, email):
 #     print(f'user: {user}')
 #     return jsonify(), 200
 
-@users.route('/register', methods=['POST'])
+@users.route('/', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')

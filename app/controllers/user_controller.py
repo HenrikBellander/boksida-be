@@ -30,7 +30,7 @@ def create_user(username, password, email=None):
         
         cursor.execute(
             "INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
-            (username, password, email),
+            (username, password_hash, email),
         )
         conn.commit()
 
@@ -104,6 +104,24 @@ def delete_user(user_id):
         cursor.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
         conn.commit()
         return {"message": f"User {user_id} deleted successfully"}, None
+    except Exception as e:
+        conn.rollback()
+        return None, f"Database error: {str(e)}"
+    finally:
+        conn.close()
+
+def delete_user_name(name):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT username FROM users WHERE username = ?", (name,))
+        if not cursor.fetchone():
+            return None, "User not found"
+
+        cursor.execute("DELETE FROM users WHERE username = ?", (name,))
+        conn.commit()
+        return {"message": f"User {name} deleted successfully"}, None
     except Exception as e:
         conn.rollback()
         return None, f"Database error: {str(e)}"
