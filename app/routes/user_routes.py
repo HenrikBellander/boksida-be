@@ -7,7 +7,6 @@ from ..controllers.user_controller import (
     update_user
 )
 
-
 users = Blueprint('users', __name__, url_prefix='/users')
 
 @users.route('/', methods=['GET'])
