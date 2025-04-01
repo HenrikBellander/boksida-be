@@ -12,6 +12,7 @@ def get_basket_items(user_id):
     rows = conn.execute("""
         SELECT 
             u.username,
+            b.book_id,
             b.book_title,
             b.book_price,
             ba.quantity,
