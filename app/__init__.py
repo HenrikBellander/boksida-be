@@ -1,4 +1,5 @@
 from flask import Flask
+
 from .routes.auth_routes import auth
 from .routes.book_routes import books
 from .routes.user_routes import users
@@ -19,5 +20,6 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(books) 
     app.register_blueprint(users)
+    
     return app
 
