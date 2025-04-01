@@ -51,10 +51,7 @@ def login():
 def verify():
     user_data, error = verify_jwt()
     if error:
-        return jsonify({
-            "status": "error",
-            "message": error
-        }), 401
+        return jsonify({"status": "error", "message": error}), 401
         
     return jsonify({
         "status": "success",
@@ -90,7 +87,7 @@ def logout():
         "",
         expires=0,
         httponly=True,
-        secure=True,
+        secure=True,    # True in production
         samesite='Lax',
         path='/'
     )
@@ -125,3 +122,34 @@ def token_required(f):
         return f(user, *args, **kwargs)
     return decorated
 
+# Example protected route
+# @app.route('/protected')
+# @token_required
+# def protected_route(current_user):
+#     return jsonify({'message': f'Hello {current_user.username}'})
+
+
+# Is this needed for the ProtectedRoute.jsx to function???
+# from functools import wraps
+
+# def protected_route(fn):
+#     @wraps(fn)
+#     def wrapper(*args, **kwargs):
+#         try:
+#             verify_jwt_in_request()  # Verifierar JWT
+#             current_user = get_jwt_identity()
+#             return fn(current_user, *args, **kwargs)
+#         except:
+#             return jsonify({"msg": "Ogiltig token"}), 401
+#     return wrapper
+
+# @app.route('/api/me', methods=['GET'])
+# @protected_route
+# def get_current_user(current_user):
+#     user_data = users.get(current_user, None)
+#     if not user_data:
+#         return jsonify({"msg": "Användare hittades inte"}), 404
+#     return jsonify({
+#         "username": current_user,
+#         "role": user_data['role']
+#     })

@@ -57,7 +57,7 @@ def update_user_route(id, username, password, email):
 #     print(f'user: {user}')
 #     return jsonify(), 200
 
-@users.route('/register', methods=['POST'])
+@users.route('/', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
