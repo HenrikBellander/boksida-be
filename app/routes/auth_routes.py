@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, make_response
 from ..controllers.user_controller import verify_user
-from ..controllers.auth_controller import authenticate_user, verify_jwt
+from ..controllers.auth_controller import authenticate_user, get_db_connection, verify_jwt, generate_jwt
 from datetime import datetime, timedelta
+from functools import wraps
 
 auth = Blueprint("auth", __name__)
 
@@ -12,47 +13,80 @@ def login():
     password = data.get('password')
     
     if not username or not password:
-        return jsonify({"error": "Username and password required"}), 400
+        return jsonify({
+            "status": "error",
+            "message": "Username and password required",
+            "data": None
+        }), 400
     
     token, error = authenticate_user(username, password)
     if error:
-        return jsonify({"error": error}), 401
+        return jsonify({
+            "status": "error",
+            "message": error,
+            "data": None
+        }), 401
     
-    #response = jsonify({"message": "Login successful"})
+    # Get complete user data from database
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT user_id, username, email FROM users WHERE username = ?", 
+        (username,)
+    )
+    user = cursor.fetchone()
+    conn.close()
+    
     response = jsonify({
         "status": "success",
         "message": "Login successful",
-        "data": None
+        "data": {
+            "user": {
+                "id": user[0],
+                "username": user[1],
+                "email": user[2] if len(user) > 2 else None
+            }
+        }
     })
-    # response.set_cookie('token', token, httponly=True, secure=True)
+    
     response.set_cookie(
         'token',
         token,
         httponly=True,
-        secure=True,
-        samesite='Strict',
-        max_age=86400  # 24h
+        secure=False,  # True in production (HTTPS)
+        samesite='Lax',
+        max_age=86400,  # 24h
+        path='/',
+        domain=None  # Current domain only
     )
-    return response
     
+    return response
 
 # @auth.route('/verify', methods=['GET'])
 # def verify():
 #     user_data, error = verify_jwt()
 #     if error:
 #         return jsonify({"error": error}), 401
-#     return jsonify({"user": user_data})
-
+#     #return jsonify({"user": user_data})
+#     return jsonify({
+#         "status": "success",
+#         "data": {"user": user_data}
+#     })
 @auth.route('/verify', methods=['GET'])
 def verify():
     user_data, error = verify_jwt()
     if error:
-        return jsonify({"error": error}), 401
+        return jsonify({"status": "error", "message": error}), 401
+        
     return jsonify({
         "status": "success",
-        "data": {"user": user_data}
+        "data": {
+            "user": {
+                "id": user_data["id"],
+                "username": user_data["username"]
+            }
+        }
     })
-
 
 # @auth.route("/logout", methods=["POST"])
 # def logout():
@@ -76,31 +110,48 @@ def logout():
     response.set_cookie(
         "token",
         "",
-        expires=0,  # Immediate expiry
+        expires=0,
         httponly=True,
-        secure=True,
-        samesite='Strict'
+        secure=True,    # True in production
+        samesite='Lax',
+        path='/'
     )
     return response
-
-# @auth.route("/me", methods=["GET"])
-# def get_current_user():
-#     user, error = verify_jwt()
-
-#     if error:
-#         return jsonify({"error": error}), 401
-
-#     return jsonify({"user": user}), 200
 
 @auth.route("/me", methods=["GET"])
 def get_current_user():
     user, error = verify_jwt()
     if error:
         return jsonify({"error": error}), 401
+    #return jsonify({"user": user}), 200
     return jsonify({
         "status": "success",
         "data": {"user": user}
     })
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.cookies.get('token')
+        
+        if not token:
+            return jsonify({'message': 'Token is missing'}), 401
+            
+        try:
+            user = verify_jwt(token)
+            if not user:
+                return jsonify({'message': 'Token is invalid'}), 401
+        except Exception as e:
+            return jsonify({'message': str(e)}), 401
+            
+        return f(user, *args, **kwargs)
+    return decorated
+
+# Example protected route
+# @app.route('/protected')
+# @token_required
+# def protected_route(current_user):
+#     return jsonify({'message': f'Hello {current_user.username}'})
 
 
 # Is this needed for the ProtectedRoute.jsx to function???

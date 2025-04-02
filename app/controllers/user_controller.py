@@ -30,7 +30,7 @@ def create_user(username, password, email=None):
         
         cursor.execute(
             "INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
-            (username, password, email),
+            (username, password_hash, email),
         )
         conn.commit()
 

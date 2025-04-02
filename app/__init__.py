@@ -9,13 +9,17 @@ def create_app():
     app = Flask(__name__)
     #CORS(app)
     #CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-    CORS(app, supports_credentials=True, resources={
-    r"/api/*": {
-        "origins": ["http://localhost:3000"],  # Your React app's URL
-        "methods": ["GET", "POST", "PUT", "DELETE"],
-        "allow_headers": ["Content-Type"]
-    }
-})
+#     CORS(app, supports_credentials=True, resources={
+#     r"/api/*": {
+#         "origins": ["http://localhost:3000"],  # Your React app's URL
+#         "methods": ["GET", "POST", "PUT", "DELETE"],
+#         "allow_headers": ["Content-Type"]
+#     }
+# })
+    CORS(app, 
+    resources={r"/*": {"origins": "http://localhost:5173"}},
+    supports_credentials=True,
+    expose_headers=["Set-Cookie"])
 
     app.register_blueprint(auth)
     app.register_blueprint(books) 
