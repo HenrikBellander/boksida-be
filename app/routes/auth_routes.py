@@ -80,6 +80,7 @@ def verify():
         
     return jsonify({
         "status": "success",
+        "message": "Authenticated",
         "data": {
             "user": {
                 "id": user_data["id"],
