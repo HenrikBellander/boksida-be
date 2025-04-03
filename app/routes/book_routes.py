@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from ..controllers.book_controller import get_categories, get_books_by_category, search_books, get_book_detail
 
 books = Blueprint('books', __name__, url_prefix='/api')
-
+    
 @books.route('/', methods=['GET'])
 def get_categories_route():
     """Hämtar alla bokkategorier från databasen och returnerar som JSON."""
@@ -29,9 +29,3 @@ def book_detail_route(book_id):
     if book is None:
         return jsonify({"error": "Boken hittades inte"}), 404
     return jsonify(book)
-
-
-
-
-
-

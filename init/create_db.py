@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config import Config
 
-# print("Absolute DB path:", os.path.abspath(Config.DB_PATH))
+#print("Absolute DB path:", os.path.abspath(Config.DB_PATH))
 
 class Database:
 
