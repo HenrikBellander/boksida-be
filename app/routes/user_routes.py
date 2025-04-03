@@ -4,14 +4,15 @@ from ..controllers.user_controller import (
     create_user,
     get_user_by_id_or_username,
     delete_user,
-    update_user
+    update_user,
+    delete_user_name,
+    update_user_username
 )
-
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
 @users.route('/', methods=['GET'])
-def get_all_users():
+def get_all_userss():
     users = get_all_users()
     return jsonify(users)
 
@@ -41,9 +42,26 @@ def del_user(id):
         return jsonify({"error": "Användaren hittades inte"}), 404
     return jsonify(user)
 
+@users.route('/username/<name>', methods=['DELETE'])
+def del_user_name(name):
+    user = delete_user_name(name)
+    if user is None:
+        return jsonify({"error": "Användaren hittades inte"}), 404
+    return jsonify(user)
+
 @users.route('/user/<id>', methods=['PUT'])
-def update_user_route(id, username, password, email):
-    user = update_user(id, username, password, email)
+def update_user_route(id):
+    data = request.json
+    user = update_user(id, {'username': data.get('username'), 'password': data.get('password'), 'email': data.get('email')})
+    if user is None:
+        return jsonify({"error": "Användaren hittades inte"}), 404
+    return jsonify(user)
+
+
+@users.route('/username/<name>', methods=['PUT'])
+def update_user_username_route(name):
+    data = request.json
+    user = update_user_username(name, {'username': data.get('username'), 'password': data.get('password'), 'email': data.get('email')})
     if user is None:
         return jsonify({"error": "Användaren hittades inte"}), 404
     return jsonify(user)

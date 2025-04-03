@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify, request, make_response
-from ..controllers.user_controller import verify_user
-from ..controllers.auth_controller import authenticate_user, get_db_connection, verify_jwt, generate_jwt
-from datetime import datetime, timedelta
+from ..controllers.auth_controller import authenticate_user, get_db_connection, verify_jwt
 from functools import wraps
 
 auth = Blueprint("auth", __name__)
