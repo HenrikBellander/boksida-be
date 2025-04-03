@@ -11,7 +11,7 @@ def create_app():
     #CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
     CORS(app, supports_credentials=True, resources={
     r"/api/*": {
-        "origins": ["http://localhost:3000"],  # Your React app's URL
+        "origins": ["http://localhost:5173"],  # Your React app's URL
         "methods": ["GET", "POST", "PUT", "DELETE"],
         "allow_headers": ["Content-Type"]
     }
