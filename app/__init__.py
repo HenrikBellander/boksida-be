@@ -1,9 +1,9 @@
 from flask import Flask
-from .basket_routes import basket # the file where your basket endpoint is defined
+from .routes.basket_routes import basket # the file where your basket endpoint is defined
 from .routes.auth_routes import auth
 from .routes.book_routes import books
 from .routes.user_routes import users
-from .team_routes import team_bp
+from .routes.team_routes import team_bp
 from flask_cors import CORS
 
 def create_app():
