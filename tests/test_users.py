@@ -15,7 +15,7 @@ def test_connection(client):
 
 def test_login(client):
     response = client.post(
-        '/auth/login',
+        '/login',
         data=json.dumps({'username': 'magkur1', 'password': '123'}),
         content_type='application/json',
     )
@@ -27,7 +27,7 @@ def test_login(client):
 
 def test_wrong_pw(client):
     response = client.post(
-        '/auth/login',
+        '/login',
         data = json.dumps({'username': 'magkur1', 'password': 'fail'}),
         content_type='application/json',
     )
