@@ -1,5 +1,9 @@
 from flask import Blueprint, jsonify, request
-from app.controllers.basket_controller import get_basket_items, add_item_to_basket, remove_item_from_basket
+from app.controllers.basket_controller import (
+    get_basket_items,
+    add_item_to_basket,
+    remove_item_from_basket
+)
 
 basket = Blueprint('basket', __name__)
 
@@ -16,8 +20,10 @@ def new_item():
 
 @basket.route('/api/basket/<int:book_id>', methods=['DELETE'])
 def del_item(book_id):
-    # For now, assume a fictive user with user_id=2
-    user_id = 2
+    # Retrieve the user_id from the query parameters.
+    user_id = request.args.get('user_id', type=int)
+    if user_id is None:
+        return jsonify({"error": "User id is required"}), 400
     result = remove_item_from_basket(user_id, book_id)
     if result:
         return jsonify({"message": "Book removed from basket"}), 200
@@ -28,6 +34,5 @@ def show_basket(user_id):
     basket_items = get_basket_items(user_id)
     if not basket_items:
         return jsonify({"error": "Empty basket"}), 404
-    # Calculate total sum (assumes book_price is stored in a numeric format or convertible)
     total = sum(float(item['book_price']) for item in basket_items)
     return jsonify({"basket_items": basket_items, "total": total})
