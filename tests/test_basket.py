@@ -1,6 +1,6 @@
 import pytest
 from flask import Flask
-from app.basket_routes import basket  # Import the blueprint from app/basket_routes.py
+from app.routes.basket_routes import basket  # Import the blueprint from app/basket_routes.py
 from app import create_app
 
 # Create a Flask application fixture and register the basket blueprint.
