@@ -1,3 +1,4 @@
+## April 2025
 # boksida-be
 Vi har gjort en webbapplikation för en exklusiv bokklubb. Användarna kan som registrerade och inloggade se och välja olika kategorier av böcker. Inom en kategori kan man sedan favoritmarkera böcker samt lägga till dem i en varukorg. Varukorgen uppdateras i realtid när böcker läggs till och plockas bort - markeringar för favorit och varukorgsval följer med oavsett om man går in och ut i olika kategorier. (Det finns dock ingen funkionalitet för att köpa böckerna i varukorgen.) Applikationen består av en backend i Flask (med databas SQLite) och en frontend i React.
 
