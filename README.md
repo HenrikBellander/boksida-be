@@ -1,5 +1,5 @@
 # boksida-be
-Vi har gjort en webbapplikation för en exklusivit bokklubb. Användarna kan som registrerade och inloggade se och välja olika kategorier av böcker. Inom en kategori kan man sedan favoritmarkera böcker samt lägga till dem i en varukorg. Varukorgen uppdateras i realtid när böcker läggs till och plockas bort - markeringar för favorit och varukorgsval följer med oavsett om man går in och ut i oloka kategorier. (Det finns dock ingen funkionalitet för att köpa böckerna i varukorgen.) Applikationen består av en backend i Flask (med databas SQLite) och en frontend i React.
+Vi har gjort en webbapplikation för en exklusiv bokklubb. Användarna kan som registrerade och inloggade se och välja olika kategorier av böcker. Inom en kategori kan man sedan favoritmarkera böcker samt lägga till dem i en varukorg. Varukorgen uppdateras i realtid när böcker läggs till och plockas bort - markeringar för favorit och varukorgsval följer med oavsett om man går in och ut i olika kategorier. (Det finns dock ingen funkionalitet för att köpa böckerna i varukorgen.) Applikationen består av en backend i Flask (med databas SQLite) och en frontend i React.
 
 # Installation och start
 - Ladda ner projekten med `git clone https://github.com/HenrikBellander/boksida-be` och `https://github.com/HenrikBellander/boksida-fe`
