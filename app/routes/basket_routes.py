@@ -20,7 +20,6 @@ def new_item():
 
 @basket.route('/api/basket/<int:book_id>', methods=['DELETE'])
 def del_item(book_id):
-    # Retrieve the user_id from the query parameters.
     user_id = request.args.get('user_id', type=int)
     if user_id is None:
         return jsonify({"error": "User id is required"}), 400

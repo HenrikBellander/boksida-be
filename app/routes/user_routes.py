@@ -16,13 +16,6 @@ def get_all_userss():
     users = get_all_users()
     return jsonify(users)
 
-# @users.route('/user/<id>', methods=['GET'])
-# def show_user(id):
-#     user = get_user_by_id_or_username(id)
-#     if user is None:
-#         return jsonify({"error": "Användaren hittades inte"}), 404
-#     return jsonify(user)
-
 @users.route('/user/<identifier>', methods=['GET'])
 def show_user(identifier):
     if identifier.isdigit():
@@ -65,15 +58,6 @@ def update_user_username_route(name):
     if user is None:
         return jsonify({"error": "Användaren hittades inte"}), 404
     return jsonify(user)
-
-# @users.route('/', methods=['POST'])
-# def register_user():
-#     data = request.get_json()
-#     user = create_user(data.get('username'), data.get('password'), data.get('email'))
-#     if user is None:
-#         return jsonify({"error": "Något gick fel"}), 404
-#     print(f'user: {user}')
-#     return jsonify(), 200
 
 @users.route('/', methods=['POST'])
 def register():

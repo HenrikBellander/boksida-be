@@ -17,6 +17,6 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(books) 
     app.register_blueprint(users)
-    app.register_blueprint(basket)  # registers the basket endpoint
+    app.register_blueprint(basket)
     
     return app

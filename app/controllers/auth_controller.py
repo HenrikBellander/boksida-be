@@ -19,7 +19,6 @@ def get_db_connection():
 
 
 def generate_token_response(user_id, username):
-    """Generates JWT and sets it as HTTP-only cookie"""
     token = generate_jwt(user_id, username)
     
     response = make_response(jsonify({
@@ -34,17 +33,16 @@ def generate_token_response(user_id, username):
         'token',
         token,
         httponly=True,
-        secure=False,  # True in production with HTTPS
+        secure=False,
         samesite='Lax',
-        max_age=86400,  # 1 day in seconds
-        path='/',  # Accessible across all routes
-        domain=None  # Current domain only
+        max_age=86400,
+        path='/',
+        domain=None
     )
     
     return response
 
 def verify_jwt():
-    """Verifies JWT from cookie and returns user payload"""
     token = request.cookies.get('token')
     if not token:
         return None, "Missing token"
@@ -84,25 +82,13 @@ def authenticate_user(username, password):
         if not user:
             return None, "User not found"
             
-        if not check_password_hash(user[2], password):  # user[2] = password_hash
+        if not check_password_hash(user[2], password):
             return None, "Incorrect password"
             
-        token = generate_jwt(user[0], user[1])  # user[0] = id, user[1] = username
+        token = generate_jwt(user[0], user[1])
         return token, None
         
     except Exception as e:
         return None, f"Database error: {str(e)}"
     finally:
         conn.close()
-
-# def verify_jwt():
-#     token = request.cookies.get("token")
-#     if not token:
-#         return None, "Missing token"
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-#         return {"id": payload["id"], "username": payload["username"]}, None
-#     except jwt.ExpiredSignatureError:
-#         return None, "Token expired"
-#     except jwt.InvalidTokenError:
-#         return None, "Invalid token"

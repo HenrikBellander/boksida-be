@@ -2,14 +2,11 @@ import requests
 import os
 from dotenv import load_dotenv
 
-# Ladda miljövariabler
 load_dotenv()
 
-# Hämta API-nyckeln från miljövariabler
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2"
 
-# Skapa mappen om den inte finns
 image_folder = 'static/images'
 os.makedirs(image_folder, exist_ok=True)
 
@@ -28,13 +25,11 @@ def generate_image_from_text(name):
 
         if response.status_code == 200:
             if 'image' in response.headers.get('Content-Type', ''):
-                # Hantera svaret som en bild
                 print("API returned an image.")
-                # Spara bilden i den specifika mappen
                 image_filename = os.path.join(image_folder, f"{name.replace(' ', '_')}_portrait.jpg")
                 with open(image_filename, "wb") as f:
                     f.write(response.content)
-                return image_filename  # Returnera den fullständiga sökvägen för bilden
+                return image_filename
             else:
                 return "API response is not an image."
         else:
@@ -42,7 +37,7 @@ def generate_image_from_text(name):
             return "API error: " + response.text
 
     except Exception as e:
-        print("Error:", e)  # Skriver ut felmeddelande för debugging
+        print("Error:", e)
         return str(e)
 
 
@@ -54,9 +49,6 @@ def get_team_members():
         {"name": "Elias Aval", "role": "Backend-utvecklare", "description": "Bygger serverdelarna.", "phone": "070-733 23 11"},
         {"name": "Magnus Kurtz", "role": "Projektledare", "description": "Hanterar projektledning.", "phone": "070-670 6666"}
     ]
-    #for member in team_members:
-        #image_url = generate_image_from_text(member['name'])
-        #member['image'] = image_url
 
     for member in team_members:
         member['image'] = f"static/images/{member['name'].replace(' ', '_')}_portrait.jpg"
