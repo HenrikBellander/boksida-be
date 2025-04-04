@@ -46,7 +46,7 @@ def test_get_all_users(client):
     response = client.get('/users/')
     users = response.json[0]
     assert any(user['username'] == 'test-user' for user in users)
-    assert any(user['username'] == 'magkur6' for user in users)
+    assert any(user['username'] == 'magkur1' for user in users)
 
 def test_update_user(client):
     response = client.put(

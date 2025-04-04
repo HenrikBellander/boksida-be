@@ -1,19 +1,6 @@
 import pytest
-from flask import Flask
-from app.routes.basket_routes import basket  # Import the blueprint from app/basket_routes.py
+from app.routes.basket_routes import basket  # Adjust this path if necessary
 from app import create_app
-
-# Create a Flask application fixture and register the basket blueprint.
-# @pytest.fixture
-# def app():
-#     app = Flask(__name__)
-#     app.register_blueprint(basket)
-#     return app
-
-# # Create a test client fixture.
-# @pytest.fixture
-# def client(app):
-#     return app.test_client()
 
 @pytest.fixture
 def client():
@@ -27,9 +14,9 @@ def client():
 # ----------------------------
 
 def test_new_item_success(client, monkeypatch):
-    # Monkeypatch add_item_to_basket to simulate a successful addition (returning a dummy basket id)
+    # Patch the function in the routes module
     monkeypatch.setattr(
-        "app.controllers.basket_controller.add_item_to_basket",
+        "app.routes.basket_routes.add_item_to_basket",
         lambda user_id, book_id, quantity: 123
     )
     payload = {"user_id": 3, "book_id": 10, "quantity": 2}
@@ -37,16 +24,18 @@ def test_new_item_success(client, monkeypatch):
     assert response.status_code == 200
     data = response.get_json()
     assert "basket_id" in data
+    # Expect 123 as per our monkeypatch
     assert data["basket_id"] == 123
 
 def test_new_item_failure(client, monkeypatch):
-    # Simulate failure by having add_item_to_basket return a falsy value (None)
+    # Simulate failure by returning a falsy value
     monkeypatch.setattr(
-        "app.controllers.basket_controller.add_item_to_basket",
+        "app.routes.basket_routes.add_item_to_basket",
         lambda user_id, book_id, quantity: None
     )
     payload = {"user_id": 3, "book_id": 10, "quantity": 2}
     response = client.post("/api/basket", json=payload)
+    # When add_item_to_basket returns None, the route returns 400
     assert response.status_code == 400
     data = response.get_json()
     assert "error" in data
@@ -56,23 +45,24 @@ def test_new_item_failure(client, monkeypatch):
 # ----------------------------
 
 def test_del_item_success(client, monkeypatch):
-    # Simulate successful removal by having remove_item_from_basket return True.
+    # Patch removal function in the routes module
     monkeypatch.setattr(
-        "app.controllers.basket_controller.remove_item_from_basket",
+        "app.routes.basket_routes.remove_item_from_basket",
         lambda user_id, book_id: True
     )
-    response = client.delete("/api/basket/10")
+    # Provide the user_id query parameter
+    response = client.delete("/api/basket/10?user_id=3")
     assert response.status_code == 200
     data = response.get_json()
     assert data.get("message") == "Book removed from basket"
 
 def test_del_item_failure(client, monkeypatch):
-    # Simulate failure by having remove_item_from_basket return False.
     monkeypatch.setattr(
-        "app.controllers.basket_controller.remove_item_from_basket",
+        "app.routes.basket_routes.remove_item_from_basket",
         lambda user_id, book_id: False
     )
-    response = client.delete("/api/basket/10")
+    response = client.delete("/api/basket/10?user_id=3")
+    # When removal returns False, the route returns 404
     assert response.status_code == 404
     data = response.get_json()
     assert "error" in data
@@ -82,14 +72,12 @@ def test_del_item_failure(client, monkeypatch):
 # ----------------------------
 
 def test_show_basket_success(client, monkeypatch):
-    # Prepare dummy basket items.
     dummy_items = [
         {"book_price": "10.5", "book_title": "Book A", "book_category": "Fiction"},
         {"book_price": "20", "book_title": "Book B", "book_category": "Non-fiction"}
     ]
-    # Monkeypatch get_basket_items to return the dummy items.
     monkeypatch.setattr(
-        "app.controllers.basket_controller.get_basket_items",
+        "app.routes.basket_routes.get_basket_items",
         lambda user_id: dummy_items
     )
     response = client.get("/api/basket/3")
@@ -97,16 +85,16 @@ def test_show_basket_success(client, monkeypatch):
     data = response.get_json()
     assert "basket_items" in data
     assert "total" in data
-    # Total should equal 10.5 + 20 = 30.5 after converting to float.
+    # The total should be 10.5 + 20 = 30.5
     assert data["total"] == 30.5
 
 def test_show_basket_empty(client, monkeypatch):
-    # Simulate an empty basket by returning an empty list.
     monkeypatch.setattr(
-        "app.controllers.basket_controller.get_basket_items",
+        "app.routes.basket_routes.get_basket_items",
         lambda user_id: []
     )
     response = client.get("/api/basket/3")
+    # When the basket is empty, the route returns 404
     assert response.status_code == 404
     data = response.get_json()
     assert "error" in data
