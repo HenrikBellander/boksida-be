@@ -51,11 +51,11 @@ def login():
         'token',
         token,
         httponly=True,
-        secure=False,  # True in production (HTTPS)
+        secure=False,
         samesite='Lax',
-        max_age=86400,  # 24h
+        max_age=86400,
         path='/',
-        domain=None  # Current domain only
+        domain=None
     )
     
     return response
@@ -86,19 +86,6 @@ def verify():
             }
         }
     })
-
-# @auth.route("/logout", methods=["POST"])
-# def logout():
-#     response = make_response(jsonify({"message": "Logged out"}))
-#     response.set_cookie(
-#         "token",
-#         "",
-#         expires=datetime.utcnow() - timedelta(seconds=3600),
-#         httponly=True,
-#         secure=False,
-#         path="/",
-#     )
-#     return response, 200
 
 @auth.route("/logout", methods=["POST"])
 def logout():
