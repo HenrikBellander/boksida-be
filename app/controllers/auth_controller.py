@@ -19,7 +19,6 @@ def get_db_connection():
 
 
 def generate_token_response(user_id, username):
-    """Generates JWT and sets it as HTTP-only cookie"""
     token = generate_jwt(user_id, username)
     
     response = make_response(jsonify({
@@ -44,7 +43,6 @@ def generate_token_response(user_id, username):
     return response
 
 def verify_jwt():
-    """Verifies JWT from cookie and returns user payload"""
     token = request.cookies.get('token')
     if not token:
         return None, "Missing token"
