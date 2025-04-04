@@ -93,16 +93,6 @@ def logout():
     )
     return response
 
-@auth.route("/me", methods=["GET"])
-def get_current_user():
-    user, error = verify_jwt()
-    if error:
-        return jsonify({"error": error}), 401
-    return jsonify({
-        "status": "success",
-        "data": {"user": user}
-    })
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
