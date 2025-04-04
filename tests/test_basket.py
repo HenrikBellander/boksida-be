@@ -1,5 +1,5 @@
 import pytest
-from app.routes.basket_routes import basket  # Adjust this path if necessary
+from app.routes.basket_routes import basket
 from app import create_app
 
 @pytest.fixture

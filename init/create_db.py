@@ -2,16 +2,12 @@ import sqlite3
 import os
 import sys
 
-# Add the parent directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config import Config
 
-#print("Absolute DB path:", os.path.abspath(Config.DB_PATH))
-
 class Database:
 
-    # SQLite database, skapa tabell books
     def create_table_books(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
@@ -29,7 +25,6 @@ class Database:
         conn.commit()
         return conn
     
-    # SQLite database, skapa tabell users
     def create_table_users(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
@@ -44,7 +39,6 @@ class Database:
         conn.commit()
         return conn
 
-    # SQLite database, skapa kopplingstabell basket
     def create_table_basket(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
@@ -62,7 +56,6 @@ class Database:
         conn.commit()
         return conn
     
-    # SQLite database, skapa kopplingstabell favorites
     def create_table_favorites(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
@@ -79,7 +72,6 @@ class Database:
         conn.commit()
         return conn
 
-    # SQLite database, ta bort tabell
     def delete_table(self):
         conn = sqlite3.connect(Config.DB_PATH)        
         cursor = conn.cursor()
